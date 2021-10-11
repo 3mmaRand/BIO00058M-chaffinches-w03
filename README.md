@@ -12,8 +12,8 @@ Other Project organisations might also be logical but some good practice include
 -  a License
 -  directories with names that describe their contents accurately
 -  parts of the analysis split up in to different scripts
--  a 'master' script (here it is analysis.R)
 -  human and computer readable names
+-  literate programming using R Markdown
 
 .gitignore and .buildignore are created automatically and anticipate the use of version control with git and package development.
 
@@ -26,7 +26,7 @@ These data are in two columns: males, female.
 The whole analysis can by run knitting main.Rmd
 
 -  import the data, format it into tidy format, and write it to data-processed/chaff-tidy.txt
--  summarise the data: means, standard deviations, standard errors, sums of sqaures and sample sizes
+-  summarise the data: means, standard deviations, standard errors, sums of squares and sample sizes
 -  visualise the data and test results and write the figure to file: figures/fig1.png
 
 
