@@ -1,5 +1,5 @@
 
-# The mass of chaffinches: an example from Topic 3 Worksop
+# The mass of chaffinches: an example from Topics 3 and 4 Workshops
 
 <!-- badges: start -->
 <!-- badges: end -->
