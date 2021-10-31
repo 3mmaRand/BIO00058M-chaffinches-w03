@@ -5,6 +5,7 @@ output:
   bookdown::html_document2: default
   bookdown::word_document2: default
   bookdown::pdf_document2: default
+bibliography: refs/reference.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -12,40 +13,120 @@ knitr::opts_chunk$set(echo = FALSE,
                      warning = FALSE,
                      message = FALSE,
                      fig.retina = 3)
+options(digits = 2)
 ```
 
 ```{r packages}
 source("R/00-pkg.R")
 ```
 
-# Introduction
+# Introduction {-#intro}
 
-The chaffinch, *Fringilla coelebs*, is one of the most widespread and common passerine bird species. It is sexually dimorphic in plumage with males being brightly coloured with a blue-grey cap and rust-red underparts and females being grey-brown with paler underparts.  This study aimed to determine whether *F.coelebs* were also sexually dimorphic in size.
+The chaffinch, *Fringilla coelebs*, is one of the most widespread and common passerine bird species [@tidyverse][@cramp_1994]. It is sexually dimorphic in plumage with males being brightly coloured with a blue-grey cap and rust-red underparts and females being grey-brown with paler underparts (see Figure \@ref(fig:chaff-photo-fig)). This study aimed to determine whether *F.coelebs* were also sexually dimorphic in size.
 
-# Methods
+<!-- figure legend -->
+
+(ref:chaff-photo-fig) Adult *Fringilla coelebs* Left, male (by Andreas Trepte, CC BY-SA 2.5 <https://creativecommons.org/licenses/by-sa/2.5>, via Wikimedia Commons); right, female (4028mdk09, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>, via Wikimedia Commons)
+
+<!-- end of fig legend -->
+
+```{r chaff-photo-fig, out.width="40%", fig.show='hold', fig.cap='(ref:chaff-photo-fig)'}
+pics <- c("images/Chaffinch_(Fringilla_coelebs)male.jpg",
+          "images/Fulda_Buchfinkweibchen_Juni_2012female.JPG")
+knitr::include_graphics(pics)
+```
+
+# Methods {-#methods}
 ```{r import}
 # chaff_tidy
 source("R/01-import.R")
 ```
 
-We randomly sampled male and female birds on the stray and determined their mass with spring scales. Analysis was carried out with R version 4.0.2 and tidyverse packages.
-
 ```{r summarise}
+# outputs chaff_summarymary with columns mean, std, n, se, ssx
 source("R/02-summarise.R")
 ```
 
 
-
-# Results
-```{r table}
-knitr::kable(chaff_summary, digits = 2)
+```{r extract-summary}
+# extract values for inline reporting
+# ss(x)
+m_ss <- chaff_summary$ssx[chaff_summary$sex == "males"]
+f_ss <- chaff_summary$ssx[chaff_summary$sex == "females"]
+# sample sizes
+n_males <- chaff_summary$n[chaff_summary$sex == "males"] 
+n_females <- chaff_summary$n[chaff_summary$sex == "females"] 
+# highest mean, se and the sex to which they belongs
+highestmean <- max(chaff_summary$mean) 
+highestse <- chaff_summary$se[chaff_summary$mean == highestmean] 
+highestsex <- chaff_summary$sex[chaff_summary$mean == highestmean]
+# lowest mean, se and the sex to which they belongs
+lowestmean <- min(chaff_summary$mean) 
+lowestse <- chaff_summary$se[chaff_summary$mean == lowestmean] 
+lowestsex <- chaff_summary$sex[chaff_summary$mean == lowestmean]
 ```
 
+We randomly sampled `r n_males` male and `r n_females` female birds on the stray and determined their mass with spring scales. Analysis was carried out with R version 4.1.1 [@R-core] and tidyverse packages [@tidyverse].
 
-```{r plot, out.height="400px"}
+
+# Results {-#results}
+
+```{r testing}
+# outputs mod, a t-test object
+source("R/03-test.R")
+```
+
+```{r extract-testing}
+res <- summary(mod)
+tval <- res$coefficients["sexmales", "t value"]
+df <- res$df[2]
+if (res$coefficients["sexmales", "Pr(>|t|)"] < 0.001) {
+        b1p = "< 0.001"
+        }
+if (res$coefficients["sexmales", "Pr(>|t|)"] > 0.001) {
+        b1p = paste("=", round(res$coefficients["sexmales", "Pr(>|t|)"], 3))
+        }
+rsq <- res$r.squared
+```
+
+We wouldn't normally report the sum of the squared deviations ($SS(x)$) but we do so here to make use of a function. For males, the $SS(x)$ = `r m_ss` and for females, the $SS(x)$ = `r f_ss`
+
+
+`r str_to_sentence(highestsex)` ($\bar{x} \pm s.e.$: `r highestmean` $\pm$ `r highestse` g) have significantly higher mass than `r lowestsex` (`r lowestmean` $\pm$ `r lowestse` g)($t$ = `r tval`; $d.f.$ = `r df`; $p$ `r b1p`). See figure \@ref(fig:chaff-fig).
+
+```{r chaff-fig, fig.height=4, fig.width=4, fig.cap="(ref:chaff-fig)"}
 source("R/04-plot.R")
-knitr::include_graphics("figures/fig1.png")
+fig1
 ```
 
+<!-- figure legend -->
 
-# Discussion
+(ref:chaff-fig) Mass of adult chaffinches caught on the Stray. Error bars are $\bar{x} \pm 1 s.e.$  
+
+<!-- end of fig legend -->
+
+I've also gratuitously included a table with the same information just for the sake of including a table. See Table \@ref(tab:summary-table).
+
+```{r summary-table}
+knitr::kable(chaff_summary,
+             digits = 2,
+             caption = 'A summary of the data.',
+             row.names = FALSE)
+```
+
+# Discussion {-#discussion}
+
+Here we pick up points from the introduction. 
+
+## Word count {-}
+Word count calculated with package **`wordcountaddin`** [@wc]
+```{r wordcount}
+wc_main <- wordcountaddin:::text_stats("main.Rmd")[3] %>% str_extract("[0-9]+") %>% as.numeric()
+wc_readme <- wordcountaddin:::text_stats("README.md")[3] %>% str_extract("[0-9]+") %>% as.numeric()
+```
+
+This doc: `r wc_main`  
+The README: `r wc_readme`  
+Total: `r wc_main + wc_readme`  
+
+# References {-}
