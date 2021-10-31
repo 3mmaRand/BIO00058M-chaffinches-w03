@@ -5,7 +5,7 @@
 <!-- badges: end -->
 
 ## Overview
-The goal of BIO00058M-chaffinches-w03 is to demonstrate what you could have on completing exercise 1 from Topic 1 and then developing it in Topic 3 .
+The goal of BIO00058M-chaffinches-w03 is to demonstrate what you could have on completing exercise 1 from Topic 1 and then developing it in Topic 3 and Topic 4.
 Other Project organisations might also be logical but some good practice include:
 
 -  a README
