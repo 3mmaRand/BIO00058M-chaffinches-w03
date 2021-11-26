@@ -23,7 +23,7 @@ fig1 <- ggplot() +
            y = 28, yend = 27,
            colour = "black") +
   annotate("text", x = 1.5,  y = 29,       # the text
-           label = expression(italic(p)~"= 0.01175")) +
+           label = expr(paste(italic(p)~!!b1p))) +
   theme_classic()
 
 
